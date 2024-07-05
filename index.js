@@ -101,47 +101,71 @@ app.post("/login", async (req, res) => {
 
   //load the hash from the database
 
-  const q = query(collection(db, "users"), where("username", "==", username));
+  //none of the log statements in the code is being logged in the terminal none 
+  try {
+     const q = query(
+       collection(db, "users"),
+       where("username", "==", username)
+     );
 
-  const querySnapshot = await getDocs(q);
+     const querySnapshot = await getDocs(q);
 
-  querySnapshot.forEach((doc) => {
-    console.log(doc.id, " => ", doc.data());
-
-    const validatePassword = bcrypt.compareSync(password, doc.data().hash);
-
-    console.log(validatePassword, " --- is password correct ?");
-
-    console.log(`${doc.data().username} username in db ${process.env.websiteAdmin} - websiteAdmin `)
-
-    if (validatePassword) {
-      if (doc.data().username === process.env.websiteAdmin) {
-        req.session.username = doc.data().username;
-        req.session.email = doc.data().email;
-        req.session.isAuthenticated = true;
-        req.session.isAdmin = true;
-
-        res.status(200).json({
-          message: "Authenticated",
-          isAuthenticated: true,
-          isAdmin: true,
-          user: { username: doc.data().username, email: doc.data().email },
-        });
-      } else {
-        req.session.username = doc.data().username;
-        req.session.email = doc.data().email;
-        req.session.isAuthenticated = true;
-        req.session.isAdmin = false;
-
-        res.status(200).json({
-          message: "Authenticated",
-          isAuthenticated: "true",
-          isAdmin: "false",
-          user: { username: doc.data().username, email: doc.data().email },
-        });
+      console.log("Query executed, processing results");
+      if (querySnapshot.empty) {
+        console.log("No user found with the provided username");
+        return res.status(409).json({ message: "User does not exist" });
       }
-    }
-  });
+
+     querySnapshot.forEach((doc) => {
+       console.log(doc.id, " => ", doc.data());
+
+       const validatePassword = bcrypt.compareSync(password, doc.data().hash);
+
+       console.log(validatePassword, " --- is password correct ?");
+
+       console.log(`${doc.data().username} - username ${process.env.websiteAdmin} - admin`)
+
+       if (validatePassword) {
+         if (doc.data().username === process.env.websiteAdmin) {
+           console.log("User is Admin \n");
+
+           req.session.username = doc.data().username;
+           req.session.email = doc.data().email;
+           req.session.isAuthenticated = true;
+           req.session.isAdmin = true;
+
+           res.status(200).json({
+             message: "Authenticated",
+             isAuthenticated: true,
+             isAdmin: true,
+             user: { username: doc.data().username, email: doc.data().email },
+           });
+         } else {
+           console.log("User is not Admin \n");
+
+           req.session.username = doc.data().username;
+           req.session.email = doc.data().email;
+           req.session.isAuthenticated = true;
+           req.session.isAdmin = false;
+
+           res.status(200).json({
+             message: "Authenticated",
+             isAuthenticated: "true",
+             isAdmin: "false",
+             user: { username: doc.data().username, email: doc.data().email },
+           });
+         }
+       } else {
+         console.log("User dne !");
+         res.status(409).json({ message: "User does not exist" });
+       }
+     });
+    
+  } catch (error) {
+    console.log(error , "error happened in /login route unexpected \n")
+  }
+
+ 
 });
 
 
