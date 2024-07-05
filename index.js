@@ -112,6 +112,8 @@ app.post("/login", async (req, res) => {
 
     console.log(validatePassword, " --- is password correct ?");
 
+    console.log(`${doc.data().username} username in db ${process.env.websiteAdmin} - websiteAdmin `)
+
     if (validatePassword) {
       if (doc.data().username === process.env.websiteAdmin) {
         req.session.username = doc.data().username;
