@@ -263,12 +263,12 @@ app.post("/viewYourUploads", async (req, res) => {
 
   console.log(req.session , `/viewYourUploads hit with post req \n`);
 
-  if ( req.isAuthenticated ) {
+  if ( req.session.isAuthenticated ) {
 
     const currentUsername = req.session.username;
     const q = query(
       collection(db, "users"),
-      where("username", "==")
+      where("username", "==" , currentUsername)
     );
 
     const querySnapshot = await getDocs(q);
