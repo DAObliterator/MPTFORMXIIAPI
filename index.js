@@ -21,8 +21,7 @@ import bodyParser from "body-parser";
 dotenv.config({ path: "./config.env" });
 const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
