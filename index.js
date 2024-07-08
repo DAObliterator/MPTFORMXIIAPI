@@ -17,10 +17,12 @@ import { isAuthenticated } from "./utils/Auth.js";
 import { db } from "./db/firebase.js";
 import multer from "multer";
 import handler from "./utils/upload.js";
+import bodyParser from "body-parser";
 dotenv.config({ path: "./config.env" });
 const app = express();
 
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
