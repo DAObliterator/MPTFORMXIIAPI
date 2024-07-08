@@ -30,16 +30,15 @@ app.use(
   })
 );
 
-/*if (!(process.env.NODE_ENV === "development")) {
+if ((process.env.NODE_ENV === "production")) {
   app.set("trust proxy", 1); // you need to add this
-}*/
+}
 
 app.use(
   session({
     secret: process.env.SECRET,
     resave: false,
-    saveUninitialized: false,
-    expires: new Date(Date.now() + (30 * 24 * 3600 * 1000)), 
+    saveUninitialized: false, 
     proxy: process.env.NODE_ENV === "production" && true, // this is optional it depend which server you host, i am not sure about Heroku if you need it or not
     cookie: {
       secure: "auto",
