@@ -51,6 +51,9 @@ const handler = async (req, res) => {
       uploadedPdfs: arrayUnion({ uploadDate: date , fileUrl: cldRes.secure_url  })
     })
 
+    //nodemailer ---
+    
+
     res.status(200).json({ message: "Upload Successful!!!"});
 
   } catch (error) {

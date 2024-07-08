@@ -259,7 +259,40 @@ app.post("/viewUserUploads", async (req, res) => {
 
 });
 
-app.post("/viewYourUploads", (req, res) => {});
+app.post("/viewYourUploads", async (req, res) => {
+
+  console.log(req.session , `/viewYourUploads hit with post req \n`);
+
+  if ( req.isAuthenticated ) {
+
+    const currentUsername = req.session.username;
+    const q = query(
+      collection(db, "users"),
+      where("username", "==")
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      console.log("user dne \n");
+      res.status(409).json({ message: "User does not exist "});
+      
+    } else {
+
+      querySnapshot.forEach((doc) => {
+        res.status(200).json({ uploadedPdfs: doc.data().uploadedPdfs})
+      })
+
+    }
+
+
+  } else {
+    res.status(401).json({ message: "Unauthenticated"})
+  }
+
+
+
+});
 
 const PORT = process.env.PORT || 6012;
 
